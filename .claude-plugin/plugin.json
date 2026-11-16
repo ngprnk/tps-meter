@@ -1,7 +1,7 @@
 {
   "name": "tps-meter",
-  "version": "0.1.0",
-  "description": "Shows Claude's output speed in tokens per second: live in the footer while it works, the session average when idle, and a /tps pane with history.",
+  "version": "0.2.0",
+  "description": "Shows Claude's output speed in tokens per second: live in the footer while it works, the session average when idle, and a pane with history.",
   "author": { "name": "ngprnk" },
   "license": "MIT",
   "repository": "https://github.com/ngprnk/tps-meter",

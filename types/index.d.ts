@@ -4,12 +4,20 @@ export type Live = {
   id: string
   model: string
   sentAt: number
-  /** When the first chunk arrived; null while still waiting on it. */
+  /** The first chunk of the attempt that answered; null while waiting on it. */
   firstAt: number | null
-  /** When `estTokens` was last counted. */
+  /** The first visible character; null while thinking is hidden. */
+  visibleAt: number | null
+  /** When `rate` was last worked out. */
   at: number
-  /** Streamed characters over ~3.6 per token: a live estimate. */
-  estTokens: number
+  /** Estimated tokens per second over the visible stream; null too early. */
+  rate: number | null
+}
+
+/** The main loop: its running turn, and the response streaming in it. */
+export type Now = {
+  turnId: string | null
+  live: Live | null
 }
 
 /** One finished model response. */
@@ -18,7 +26,7 @@ export type Step = {
   model: string
   /** Exact output tokens as the API reported them (thinking included). */
   tokens: number
-  /** First chunk to last chunk: the time spent generating. */
+  /** First chunk to the stop: the time spent generating. */
   decodeMs: number
   /** Request sent to first chunk. */
   ttftMs: number
@@ -33,14 +41,30 @@ export type Totals = {
   peak: number
 }
 
+/** Visible characters and the tokens they cost, over calibrating responses. */
+export type Calib = {
+  chars: number
+  tokens: number
+}
+
+/** Everything measured this session. */
+export type History = {
+  /** The last responses, main thread and subagents alike. */
+  steps: Step[]
+  /** The main thread's last response, however many subagent ones came since. */
+  lastMain: Step | null
+  /** The main thread alone: what the footer's average is. */
+  main: Totals
+  /** Main thread and subagents together. */
+  all: Totals
+  calib: Calib
+}
+
 declare module 'claude-code' {
   interface PluginState {
     'tps-meter': {
-      live: Shaped<Live | null>
-      /** The main loop's running turn, null while idle. */
-      working: Shaped<string | null>
-      steps: Shaped<Step[]>
-      totals: Shaped<Totals>
+      now: Shaped<Now>
+      history: Shaped<History>
     }
   }
 }
