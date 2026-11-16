@@ -1,0 +1,6 @@
+{
+  "name": "tps-meter",
+  "owner": { "name": "ngprnk" },
+  "description": "tps-meter: a tokens-per-second readout for Claude Code.",
+  "plugins": [{ "name": "tps-meter", "source": "./" }]
+}
